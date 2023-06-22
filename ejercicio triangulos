@@ -1,0 +1,128 @@
+#include <stdio.h>
+#include <math.h>
+
+float distancias(float x1, float y1, float z1, float x2, float y2, float z2);
+
+
+float calcularPerimetro(float puntos[4][3], float *peri1, float *peri2, float *peri3, float *peri4,  float *l1, float *l2, float *l3, float *l4, float *l5, float *l6, float *sol1,float *sol2,float *sol3,float *sol4);
+float heron(float s, float l1, float l2, float l3);
+
+float calcularArea(float *l1, float *l2, float *l3, float *l4, float *l5, float *l6, float *s1,float *s2,float *s3,float *s4, float *abase);
+
+
+
+float calcularVolumen( float puntos[4][3], float *abase, float b[1][3]);
+
+int main(){
+
+
+    float puntos[4][3] = {{0,0,3}, {3,0,0},{0,0,0},{1,7,1}};
+    float vol[1][3];
+
+
+    float peri1, peri2, peri3, peri4, l1, l2, l3, l4, l5,l6, sol1, sol2, sol3, sol4, labase;
+
+    float perimetro = calcularPerimetro(puntos, &peri1, &peri2,  &peri3,  &peri4,   &l1,  &l2,  &l3,  &l4, &l5, &l6, &sol1, &sol2, &sol3, &sol4);
+
+
+    float area = calcularArea(&l1,  &l2,  &l3,  &l4,  &l5,  &l6,  &sol1, &sol2, &sol3, &sol4, &labase);
+
+
+
+    float volumen = calcularVolumen(puntos, &labase, vol);
+
+    printf("El Perimetro es %f\n", perimetro);
+
+    printf("El Area es %f\n", area);
+
+
+    printf("El Volumen es %f\n", volumen);
+
+
+    return 0;
+}
+
+float distancias(float x1, float y1, float z1, float x2, float y2, float z2){
+
+    float dist = sqrt(pow(x2-x1,2)+pow(y2-y1,2)+pow(z2-z1,2));
+    return dist;
+
+}
+
+float calcularPerimetro(float puntos[4][3], float *peri1, float *peri2, float *peri3, float *peri4,  float *l1, float *l2, float *l3, float *l4, float *l5, float *l6, float *sol1,float *sol2,float *sol3,float *sol4){
+
+    *l1 = distancias(puntos[0][0], puntos[0][1], puntos[0][2], puntos[1][0], puntos[1][1], puntos[1][2]);
+
+    *l2 = distancias(puntos[0][0], puntos[0][1], puntos[0][2], puntos[2][0], puntos[2][1], puntos[2][2]);
+
+    *l3 = distancias(puntos[2][0], puntos[2][1], puntos[2][2], puntos[1][0], puntos[1][1], puntos[1][2]);
+
+    *l4 = distancias(puntos[0][0], puntos[0][1], puntos[0][2], puntos[3][0], puntos[3][1], puntos[3][2]);
+
+    *l5 = distancias(puntos[1][0], puntos[2][1], puntos[1][2], puntos[3][0], puntos[3][1], puntos[3][2]);
+
+
+    *l6 = distancias(puntos[2][0], puntos[2][1], puntos[2][2], puntos[3][0], puntos[3][1], puntos[3][2]);
+
+
+    *peri1 = *l1 + *l2 + *l3;
+    *sol1 = *peri1/2;
+
+
+    *peri2 = *l2 + *l4 + *l6;
+    *sol2 = *peri2/2;
+
+    *peri3 = *l3 + *l5 + *l6;
+    *sol3 = *peri3/2;
+
+
+    *peri4 = *l1 + *l5 + *l4;
+    *sol4 = *peri4/2;
+
+
+
+
+    float per = *peri1 + *peri2 + *peri3 + *peri4;
+
+
+    return per;
+}
+
+float varicentro(float sol, float l1, float l2, float l3){
+
+    float varicentro = sqrt(sol * (sol-l1) * (sol-l2) * (sol-l3));
+    return varicentro;
+}
+
+float calcularArea(float *l1, float *l2, float *l3, float *l4, float *l5, float *l6, float *sol1,float *sol2,float *sol3,float *sol4, float *labase){
+
+    float area2, area3, area4, at;
+
+    *labase = varicentro(*sol1, *l1, *l2, *l3);
+    area2 = varicentro(*sol2, *l2, *l4, *l6);
+    area3 = varicentro(*sol3, *l3, *l5, *l6);
+    area4 = varicentro(*sol4, *l1, *l5, *l4);
+
+    at = *labase + area2 + area3 + area4;
+
+    return at;
+}
+
+float calcularVolumen( float puntos[4][3], float *labase, float vol[1][3]){
+
+    float altu, volu;
+
+    vol[1][0] = (puntos[0][0] + puntos[0][1] + puntos[0][2]) / 3;
+
+
+    vol[1][1] = (puntos[1][0] + puntos[1][1] + puntos[1][2]) / 3;
+
+
+    vol[1][2] = (puntos[2][0] + puntos[2][1] + puntos[2][2]) / 3;
+
+    altu = distancias(vol[0][0], vol[0][1], vol[0][2], puntos[3][0], puntos[3][1], puntos[3][2]);
+
+    volu = (*labase * altu )/ 3;
+
+    return volu;
+}
